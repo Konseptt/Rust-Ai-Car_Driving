@@ -140,19 +140,19 @@ fn car_nn_controlled_system(
         if brain.ray_inputs.is_empty() {
             speed.0 = 0.0;
             turn_speed.0 = 0.0;
-            return;
+            continue;
         }
 
         brain.nn_outputs = brain.nn.predict(&brain.ray_inputs);
         let nn_out = brain.nn_outputs.last().unwrap().clone();
         //  nn_out = brain.nn.predict(&brain.ray_inputs).pop().unwrap();
 
-        let w_key = nn_out[0] >= NN_W_ACTIVATION_THRESHOLD;
-        let s_key = nn_out[2] >= NN_S_ACTIVATION_THRESHOLD;
+        let w_key = nn_out.get(0).copied().unwrap_or(0.0) >= NN_W_ACTIVATION_THRESHOLD;
+        let s_key = nn_out.get(2).copied().unwrap_or(0.0) >= NN_S_ACTIVATION_THRESHOLD;
         let mut a_key = false;
         let mut d_key = false;
 
-        if nn_out[1] >= 0.5 {
+        if nn_out.get(1).copied().unwrap_or(0.0) >= 0.5 {
             a_key = true;
         } else {
             d_key = true;

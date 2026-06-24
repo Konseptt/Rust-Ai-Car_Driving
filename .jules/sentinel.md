@@ -1,0 +1,4 @@
+## 2024-06-25 - [Logic Bug DoS via Return Statement]
+**Vulnerability:** A `return;` statement within the ECS system `car_nn_controlled_system`'s query iteration loop halted the entire system for all entities as soon as one car had an empty `ray_inputs` array.
+**Learning:** In Bevy (and other ECS frameworks), using `return` inside a `Query::iter_mut()` loop exits the system function completely. This causes a single entity's invalid state to inflict a Denial of Service on all other entities processed by that system.
+**Prevention:** Use `continue;` to safely skip the current iteration/entity and proceed to process the remaining entities. Always ensure loops handling multiple entities do not break/return prematurely due to one entity's missing state.
